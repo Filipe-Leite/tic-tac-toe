@@ -69,13 +69,13 @@ class Board
     def diagonal_win?(marker)
         [
          ->(i) { i },
-         ->(i) { - (i+1) }
-        ].any? do |proc|    
-            (0...HEIGHT).all? do |i|
+         ->(i) { - (i + 1) }
+        ].any? do |match_to_column|    
+            (0...HEIGHT).all? do |row_index|
                 # i
                 # -(i+1)
                 # second_index = sign > 0 ? i : sign * (i+1)
-                @grid[i][proc.call(i)] == marker
+                @grid[row_index][match_to_column.call(row_index)] == marker
             end
         end
     end
