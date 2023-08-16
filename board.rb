@@ -6,12 +6,48 @@ class Board
         @grid = Array.new(HEIGHT) { Array.new(WIDTH,:" ")}
     end
 
-    def display
-        @grid.reduce("\n") { |output, row| output << format_row(row) } << "\n"
-    end
-
     def winner?(marker)
         row_win?(marker) || column_win?(marker) || diagonal_win?(marker)
+    end
+
+    def [](y,x)
+        @grid[y][x]
+    end
+
+    def []=(y,x,marker)
+        if @grid[y][x] == :" " && [:X,:O].include?(marker)
+            @grid[y][x] = marker
+        else
+            false
+        end
+    end
+
+    def display
+        output = "\n"
+
+        # TODO: Append header
+        output << generate_header
+        # TODO: Generate grid with letter for each row
+        output << generate_rows
+        output << "\n"
+    end
+
+    private
+    def format_row(row,letter)
+        row.reduce("  #{letter} ") { |string, cell| string << "[#{cell}]" }  << "\n"
+    end
+
+    def generate_header
+        (1..WIDTH).reduce("   ") { |header, n| header << "  #{n}" } << "\n"
+    end
+
+    def generate_rows
+        letter = "@"
+
+        @grid.reduce("") do |output, row|
+            letter = letter.next
+            output << format_row(row, letter)
+        end
     end
 
     def row_win?(marker)
@@ -32,8 +68,8 @@ class Board
 
     def diagonal_win?(marker)
         [
-         lambda {|i| i},
-         lambda {|i| - (i+1)}
+         ->(i) { i },
+         ->(i) { - (i+1) }
         ].any? do |proc|    
             (0...HEIGHT).all? do |i|
                 # i
@@ -43,47 +79,31 @@ class Board
             end
         end
     end
-
-    def [](y,x)
-        @grid[y][x]
-    end
-
-    def []=(y,x,marker)
-        if @grid[y][x] == :" " && [:X,:O].include?(marker)
-            @grid[y][x] = marker
-        else
-            false
-        end
-    end
-
-    private
-    def format_row(row)
-        row.reduce("") { |row_string, cell| row_string << "[#{cell}]" }  << "\n"
-    end
-
 end
 
-def print_and_check
-    @b.display
-    p "Row with all Os?: #{@b.row_win?(:O)}"
-    p "Row with all Xs?: #{@b.row_win?(:X)}"
-    p "Column with all Os?: #{@b.column_win?(:O)}"
-    p "Column with all Xs?: #{@b.column_win?(:X)}"
-    p "Diagonal with all Os?: #{@b.diagonal_win?(:O)}"
-    p "Diagonal with all Xs?: #{@b.diagonal_win?(:X)}"
-end
+# A1 => [0,0]
 
-@b = Board.new
-print_and_check
-# b.grid[0][1] = :X
-# b.grid[0][1].replace("X")
-# b.grid[0][1].replace(:"X").downcase!
-# b.grid[0][1] = :"X"
-@b[0][0] = :X
-print_and_check
+# def print_and_check
+#     @b.display
+#     p "Row with all Os?: #{@b.row_win?(:O)}"
+#     p "Row with all Xs?: #{@b.row_win?(:X)}"
+#     p "Column with all Os?: #{@b.column_win?(:O)}"
+#     p "Column with all Xs?: #{@b.column_win?(:X)}"
+#     p "Diagonal with all Os?: #{@b.diagonal_win?(:O)}"
+#     p "Diagonal with all Xs?: #{@b.diagonal_win?(:X)}"
+# end
 
-@b[1][1] = :X
-print_and_check
+# @b = Board.new
+# print_and_check
+# # b.grid[0][1] = :X
+# # b.grid[0][1].replace("X")
+# # b.grid[0][1].replace(:"X").downcase!
+# # b.grid[0][1] = :"X"
+# @b[0][0] = :X
+# print_and_check
 
-@b[1][0] = :X
-print_and_check
+# @b[1][1] = :X
+# print_and_check
+
+# @b[1][0] = :X
+# print_and_check
