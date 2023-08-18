@@ -6,20 +6,22 @@ class Board
         @grid = Array.new(HEIGHT) { Array.new(WIDTH,:" ")}
     end
 
-    def winner?(marker)
+    def winner?(player)
+        marker = player.marker
         row_win?(marker) || column_win?(marker) || diagonal_win?(marker)
     end
 
-    def [](y,x)
-        @grid[y][x]
+    def spaces_left?
+        @grid.any? do |row|
+            row.any? do |cell|
+                cell == :" "
+            end
+        end
     end
 
-    def []=(y,x,marker)
-        if @grid[y][x] == :" " && [:X,:O].include?(marker)
-            @grid[y][x] = marker
-        else
-            false
-        end
+    def place_marker(coordinates,marker)
+        y, x = coordinates 
+        @grid[y][x] = marker if @grid[y][x] == :" "
     end
 
     def display
